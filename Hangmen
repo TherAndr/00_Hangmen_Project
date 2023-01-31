@@ -1,42 +1,17 @@
-# Hangman game
-Hangman is a guessing game where the player(s) try to guess the word by suggesting a letters.  
-Player is allowed a certain number of mistakes.  
-The game starts with a word where all letters are replaced with a `-` so the only information available to a player is a number of letters in a word.  
-**Start**: `------`  
-For each correctly guessed letter, a position of the letter is revealed (if there are multiple positions for a same letter, they are all revealed.  
-**Correct**: `-E--E-`  
-For each wrongly guessed letter, number of allowed mistakes decreases by 1.  
-**Wrong**: 'Number of allowed mistakes is now 5'
-Name of the game comes from a drawing of a hanged stick figure. For every mistake a new element of a hanged figure is added.  
-If a player guesses a word before the last element of a figure is added, a player wins.  
-If a player doesn't guess a word before the last element of a figure is added, player loses.
-**Here you can see a simulation of 3 different steps:**  
-Hidden word is: ------  
-==============================================================  
-Pick a letter:  
- S  
-Correct! There is a letter S in a secret word!  
-S-----  
-==============================================================  
-Pick a letter:  
- V  
-WRONG! Number of mistakes left: 5  
-  
-        ____________  
-         |  
-         O  
-==============================================================  
-Pick a letter:  
- L  
-WRONG! Number of mistakes left: 4  
-  
-        ____________  
-         |  
-         O  
-        /  
-==============================================================  
-Pick a letter:  
-## Try to create a hangman game on your own using what you have learned so far.
+
+import random
+!pip install english-words==1.1.0
+from english_words import english_words_alpha_set
+
+# create word list from english dictionary
+word_list = list(list(english_words_alpha_set)) 
+
+# choose random word from word list
+rand_num = random.randint(0, len(word_list)-1) # len(word_list) = 2 -> positions 0,1
+chosen_word = word_list[rand_num].upper()
+secret_word = len(chosen_word)*"-"
+print(f"The word we are looking for has {len(secret_word)} letters. {secret_word}")
+
 # hangman visuals
 hangman={0:'''
         ____________
@@ -76,37 +51,19 @@ hangman={0:'''
          |
         / \\ '''}
 
-!pip install english-words==1.1.0
-from english_words import english_words_alpha_set
-word_list = list(list(english_words_alpha_set)) 
 
-import random
-
-rand_num = random.randint(0, len(word_list)-1) # len(word_list) = 2 -> positions 0,1
-chosen_word = word_list[rand_num].upper()
-secret_word = len(chosen_word)*"-"
-print(f"The word we are looking for has {len(secret_word)} letters. {secret_word}")
-
-guesses_correct = []
-guesses_wrong = []
-# RESULT: random word has been choosen
-
-# NAME: final VERSION 
-# INFO: version with 6 trys nicer Version
-# player needs to guess a letter, loop running for the number of letters of the word
-
-empty_list = [] # to safe index of doubled values - CAN be deleted??
-secret_word = len(chosen_word)*"-" # in caseword was overwritten
-acc_wrong_guesses = len(hangman)-1 # depends on len(hangman) - 6 - accepted wrong guesses
-count_hangman = len(hangman)-1 # 6 # decreased by 1 when wrong letter is entered
+# create variables
+empty_list = [] # to safe index of doubled values 
 guesses_correct = [] # list of correct guesses
 guesses_wrong = [] # list of wrong guesses
 count_wrong_guesses = 0 # counts wrong guessed letters
 count_revea_letters = 0 # counts amount of letters being revealed
 
+acc_wrong_guesses = len(hangman)-1 # accepted wrong guesses
+count_hangman = len(hangman)-1 # count wrong guesses, decreased by 1 when wrong letter is entered
+
 while count_wrong_guesses < acc_wrong_guesses:
   print(f"You have {acc_wrong_guesses-count_wrong_guesses} guess(es) left. Please enter letters only. Exit the game - BREAK. Guess the whole word - WHOLE")
-  # if count_hangman == acc_wrong_guesses:
   print(hangman[acc_wrong_guesses-count_hangman])
   print(secret_word)
   print("")
@@ -115,18 +72,16 @@ while count_wrong_guesses < acc_wrong_guesses:
   guessed_letter = input()
   guessed_letter = guessed_letter.upper()
   # check for each position
-  if guessed_letter.isdigit() == True: # change to isalpha()
+  if guessed_letter.isalpha() == True: # change to isalpha()
     print("-------------------------- PLEASE ENTER A LETTER NOT A NUMBER --------------------------")
     print("========================================================================================")
     continue
   if guessed_letter in chosen_word: # is letter in word?
     print(f"CORRECT")
-   # print(f"guessed wrong letters: {guesses_wrong}")
     number_of_letters = chosen_word.count(guessed_letter)
     count_revea_letters = number_of_letters + count_revea_letters     # count number of reveiled letters
     for idx in range(len(secret_word)):
       if chosen_word[idx] == guessed_letter and guessed_letter != "BREAK" and guessed_letter != "WHOLE":
-        # guesses_correct.append(guessed_letter)
         empty_list.append(idx) # safes idx of letter
         secret_word = secret_word[:idx] + guessed_letter + secret_word[idx+1:]
       if number_of_letters > 1:
@@ -134,12 +89,9 @@ while count_wrong_guesses < acc_wrong_guesses:
         continue
     print(secret_word)
   elif guessed_letter not in chosen_word and guessed_letter != "BREAK" and guessed_letter != "WHOLE":
-    # here try ??
     print(f"WRONG")
-    # print(secret_word)
     count_hangman = count_hangman-1
     count_wrong_guesses = count_wrong_guesses + 1
-   # print(hangman[acc_wrong_guesses-count_hangman]) #######
     guesses_wrong.append(guessed_letter)
   elif guessed_letter == "BREAK": 
     print(".YOU JUST ENDED THE GAME.")
@@ -156,19 +108,18 @@ while count_wrong_guesses < acc_wrong_guesses:
       print(f"THE CORRECT WORD IS: {chosen_word}")
       print(player_guess, chosen_word)
     break
-  if (count_wrong_guesses) == acc_wrong_guesses: # presented after last guess 
+  if (count_wrong_guesses) == acc_wrong_guesses:  
     print("========================================================================================")
     print("========================================================================================")
     print("/////////////////////////// YOU ARE DEAD! ////////////////////////////////////")
     print(hangman[acc_wrong_guesses-count_hangman])
     print(f"THE CORRECT WORD IS: {chosen_word}")
-    print("========================================================================================")a
+    print("========================================================================================")
 
-  if count_revea_letters == len(secret_word): ## here 
+  if count_revea_letters == len(secret_word): 
     print(f"****************************** CORRECT. YOU WON THE GAME.************************************")
     break
-  count_guesses = count_guesses-1
+  
 
   print("========================================================================================")
   
-# RESULT: loop over length of word, ending with end of game
