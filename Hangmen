@@ -72,7 +72,7 @@ while count_wrong_guesses < acc_wrong_guesses:
   guessed_letter = input()
   guessed_letter = guessed_letter.upper()
   # check for each position
-  if guessed_letter.isalpha() == True: # change to isalpha()
+  if guessed_letter.isdigit() == True: # change to isalpha()
     print("-------------------------- PLEASE ENTER A LETTER NOT A NUMBER --------------------------")
     print("========================================================================================")
     continue
