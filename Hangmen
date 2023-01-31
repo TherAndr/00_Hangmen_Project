@@ -87,51 +87,55 @@ hangman={0:'''
      break 
 # # RESULT: word_list created that contains words
 
-import random
-
-rand_num = random.randint(0, len(word_list)-1) # len(word_list) = 2 -> positions 0,1
-chosen_word = word_list[rand_num].upper()
-secret_word = len(chosen_word)*"-"
-print(f"The word we are looking for has {len(secret_word)} letters. {secret_word}")
-
-guesses_correct = []
-guesses_wrong = []
-# RESULT: random word has been choosen
-
-# NAME: THIS IS THE ORIGINAL SOLUTION 
-# INFO: without hangman with len(word)-1 guesses
+# NAME: VERSION - CHECK FOR DIGITS
+# INFO: 7 trys and hangman
 
 # player needs to guess a letter, loop running for the number of letters of the word
 
 empty_list = []
 secret_word = len(chosen_word)*"-"
+acc_wrong_guesses = len(hangman) # depends on len(hangman) - 7
+count_hangman = len(hangman) # 7 
+guesses_correct = []
+guesses_wrong = []
+count_wrong_guesses = 0
+count_revei_letters = 0
 
-for word_len in range(len(secret_word)-1):
-  print(f"You have {len(secret_word)-1-word_len} guesses left. Please enter letters only. If you want to exit the game enter break. If you want to guess the whole word enter whole")
+while count_wrong_guesses < acc_wrong_guesses:
+  print(f"You have {acc_wrong_guesses-count_wrong_guesses} guess(es) left. Please enter letters only. If you want to exit the game enter break. If you want to guess the whole word enter whole")
+  print(secret_word)
   guessed_letter = input()
   guessed_letter = guessed_letter.upper()
   # check for each position
-
+  if guessed_letter.isdigit() == True:
+    print("******************** PLEASE ENTER A LETTER NOT A NUMBER ********************************")
+    continue
   if guessed_letter in chosen_word: # is letter in word?
     print(f"this letter is in the word")
+    print(f"guessed wrong letters: {guesses_wrong}")
     number_of_letters = chosen_word.count(guessed_letter)
+    count_revei_letters = number_of_letters + count_revei_letters     # count number of reveiled letters
     for idx in range(len(secret_word)):
       if chosen_word[idx] == guessed_letter and guessed_letter != "BREAK" and guessed_letter != "WHOLE":
-        guesses_correct.append(guessed_letter)
+        # guesses_correct.append(guessed_letter)
         empty_list.append(idx) # safes idx of letter
         secret_word = secret_word[:idx] + guessed_letter + secret_word[idx+1:]
       if number_of_letters > 1:
-        # print(f" there are {number_of_letters} in this word.")
         number_of_letters = number_of_letters -1
         continue
     print(secret_word)
-    # print(empty_list)
   elif guessed_letter not in chosen_word and guessed_letter != "BREAK" and guessed_letter != "WHOLE":
+    # here try ??
     print(f"This letter is not in the word")
-    print(secret_word)
+    # print(secret_word)
+    print(hangman[len(hangman)-count_hangman]) 
     guesses_wrong.append(guessed_letter)
+    print(f"guessed wrong letters: {guesses_wrong}")
+    count_hangman = count_hangman-1
+    count_wrong_guesses = count_wrong_guesses + 1
   elif guessed_letter == "BREAK": 
     print("you just eneded the game ended")
+    print(f"the correct word is {chosen_word}")
     break
   elif guessed_letter == "WHOLE":
     print("Guess the whole word:")
@@ -141,8 +145,16 @@ for word_len in range(len(secret_word)-1):
       print(f"Correct. You won the game.")
     else:
       print(f"Incorrect, you lost the game")
+      print(f"the correct word is {chosen_word}")
       print(player_guess, chosen_word)
     break
-  if (len(secret_word)-word_len) == 1: # presented after last guess 
+  if (count_wrong_guesses) == 7: # presented after last guess 
     print("You are dead!")
-# RESULT: loop over length of word, ending with end of game
+    # print(hangman[6])
+    print(f"the correct word is {chosen_word}")
+  if count_revei_letters == len(secret_word): ## here 
+    print(f"You won the game. The word is {chosen_word}")
+    break
+  count_guesses = count_guesses-1
+  print("=================================================================")
+  
